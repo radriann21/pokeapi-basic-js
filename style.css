@@ -6,6 +6,28 @@
   box-sizing: border-box;
 }
 
+:root {
+  --type-normal: #A8A77A;
+  --type-fighting: #C22E28;
+  --type-flying: #A98FF3;
+  --type-poison: #A33EA1;
+  --type-ground: #E2BF65;
+  --type-rock: #B6A136;
+  --type-bug: #A6B91A;
+  --type-ghost: #735797;
+  --type-steel: #B7B7CE;
+  --type-fire: #EE8130;
+  --type-water: #6390F0;
+  --type-grass: #7AC74C;
+  --type-electric: #F7D02C;
+  --type-psychic: #F95587;
+  --type-ice: #96D9D6;
+  --type-dragon: #6F35FC;
+  --type-dark: #705746;
+  --type-fairy: #D685AD;  
+}
+
+
 body {
   max-width: 100%;
   min-height: 100dvh;
@@ -16,6 +38,20 @@ body {
   align-items: center;
   justify-content: center;
   padding: 2.5rem;
+  position: relative;
+}
+
+h2.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  bottom: 50%;
+  right: 50%;
+  visibility: hidden;
+}
+
+h2.show {
+  visibility: visible;
 }
 
 main.container {
@@ -29,6 +65,7 @@ main.container {
 }
 
 section.poke-container {
+  margin-top: 1rem;
   width: 100%;
   display: flex;
   align-items: center;
@@ -40,28 +77,34 @@ section.poke-container {
     height: fit-content;
     border: 0;
     border-radius: 8px;
-    background-color: #141414;
     display: flex;  
     flex-direction: column;
     align-items: center;
     justify-items: center;
     padding: 1rem;
     text-align: center;
+    color: #fff;
 
-    & div.poke-image {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      background-color: antiquewhite;
+    & img.poke-image {
+      border-radius: 100%;
+      width: 120px;
+      height: 120px;
     }
 
     & section.poke-info {
-      width: 100%;
-      margin-top: .8rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      color: red;
+      margin-top: 1rem;
+
+      & ul.poke-stats {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+
+        & li.poke-stat {
+          margin-block: .2rem;
+        }
+      }
     }
+
   }
 }
