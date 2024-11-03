@@ -1,3 +1,4 @@
+import { getData } from "./services/getData";
 const $ = (selector) => document.querySelector(selector); // helper
 
 const pokemonContainer = $(".poke-container");
@@ -7,7 +8,7 @@ const pokemons = JSON.parse(localStorage.getItem("pokemons")) || [];
 function renderPokemon(pokemon) {
   const pokemonCard = document.createElement("article");
   pokemonCard.classList.add("poke-card");
-  pokemonCard.setAttribute('style',`background-color: var(--type-${pokemon.type}`)
+  pokemonCard.setAttribute('style', `background-color: var(--type-${pokemon.type}`)
 
   pokemonCard.innerHTML = `
     <img src="${pokemon.img}" class="poke-image" />
@@ -38,47 +39,42 @@ function toggleLoading() {
 }
 
 async function getPokemonData(pokemonUrl) {
-  const res = await fetch(pokemonUrl);
-  const data = await res.json();
+  try {
+    const data = await getData(pokemonUrl);
+    const pokemon = {
+      img: data.sprites.front_default,
+      name: data.name,
+      weight: data.weight,
+      health: data.stats[0].base_stat,
+      type: data.types[0].type.name,
+    }
 
-  const pokemon = {
-    img: data.sprites.front_default,
-    name: data.name,
-    weight: data.weight,
-    health: data.stats[0].base_stat,
-    type: data.types[0].type.name,
+    pokemons.push(pokemon)
+    localStorage.setItem("pokemons", JSON.stringify(pokemons))
+    renderPokemon(pokemon)
+  } catch (error) {
+    console.error('Failed to fetch Pokemon data:', error) 
   }
-
-  pokemons.push(pokemon)
-  localStorage.setItem("pokemons", JSON.stringify(pokemons));
-  renderPokemon(pokemon)
 }
 
 async function getPokemons() {
   toggleLoading();
   try {
-    const res = await fetch("https://pokeapi.co/api/v2/pokemon?limit=151");
-    if (!res.ok) {
-      throw new Error("error fetching data");
-    }
-    const data = await res.json();
+    const data = await getData("https://pokeapi.co/api/v2/pokemon?limit=151");
     const { results } = data;
 
     if (Array.isArray(results)) {
-      await Promise.all(
-        results.map(async (pokemon) => {
-          await getPokemonData(pokemon.url);
-        })
-      );
+      await Promise.all(results.map(pokemon => getPokemonData(pokemon.url)));
     } else {
-      throw new Error("Error in getPokemons");
+      throw new Error('Invalid data structure');
     }
-  } catch (err) {
-    console.error("ay caramba");
+  } catch (error) {
+    console.error('Failed to fetch Pokemons:', error);
   } finally {
     toggleLoading();
   }
 }
+
 
 function init() {
   if (pokemons.length === 0) {
@@ -87,6 +83,5 @@ function init() {
     pokemons.forEach((pokemon) => renderPokemon(pokemon))
   }
 }
-
 init()
 
